@@ -1,5 +1,6 @@
 class NotFoundStockData(Exception):
     ...
 
+
 class StockSearchException(Exception):
     ...

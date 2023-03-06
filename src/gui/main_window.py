@@ -1,9 +1,19 @@
 import sys
 import logging
 
-from PyQt5.QtWidgets import QMainWindow, QTableView, QLabel, QAction, QMenuBar, QMenu, QPushButton, QFileDialog
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QTableView,
+    QLabel,
+    QAction,
+    QMenuBar,
+    QMenu,
+    QPushButton,
+    QFileDialog,
+)
 
 from PyQt5.QtCore import Qt, QAbstractTableModel
+
 
 class TableModel(QAbstractTableModel):
     def __init__(self, data, headers):
@@ -27,6 +37,7 @@ class TableModel(QAbstractTableModel):
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
             return self._headers[section]
 
+
 class MainWindow(QMainWindow):
     def __init__(self, data, headers):
         super().__init__()
@@ -39,11 +50,11 @@ class MainWindow(QMainWindow):
         table_view.setModel(table_model)
         self.setCentralWidget(table_view)
 
-        save_button = QPushButton('Save', self)
+        save_button = QPushButton("Save", self)
         save_button.clicked.connect(self.save_data)
         self.addToolBarBreak()
         self.addToolBar(Qt.BottomToolBarArea, self.create_toolbar([save_button]))
-        
+
         self.createActions()
         self.createMenuBar()
 
@@ -56,29 +67,33 @@ class MainWindow(QMainWindow):
         self.setMenuBar(menuBar)
 
     def create_toolbar(self, buttons):
-        toolbar = self.addToolBar('Save Toolbar')
+        toolbar = self.addToolBar("Save Toolbar")
         for button in buttons:
             toolbar.addWidget(button)
         return toolbar
-    
 
     def createActions(self):
         self.saveAction = QAction("&Salvar", self)
 
     def save_data(self):
         try:
-            file_path, _ = QFileDialog.getSaveFileName(self, 'Save File', '', 'CSV files (*.csv)')
+            file_path, _ = QFileDialog.getSaveFileName(
+                self, "Save File", "", "CSV files (*.csv)"
+            )
             if file_path:
-                with open(file_path, 'w') as file:
-                    headers = [header.replace(' ', '_').lower() for header in self.headers]
-                    file.write(','.join(headers) + '\n')
+                with open(file_path, "w") as file:
+                    headers = [
+                        header.replace(" ", "_").lower() for header in self.headers
+                    ]
+                    file.write(",".join(headers) + "\n")
                     logging.info("Salvando arquivo")
                     for row in self.data:
-                        values = [str(row.get(header, '')) for header in headers]
-                        file.write(','.join(values) + '\n')
+                        values = [str(row.get(header, "")) for header in headers]
+                        file.write(",".join(values) + "\n")
                     logging.info("Arquivo salvo com sucesso")
         except Exception as e:
             logging.error("erro ao salvar arquivo", e)
+
 
 class LoadingWindow(QMainWindow):
     def __init__(self):
